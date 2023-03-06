@@ -1,0 +1,355 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Homework RESTful API",
+    "version": "1",
+    "description": "Documentation OpenAPI for Homework week-9 RESTful API",
+    "termsOfService": "https://www.rakmin.com",
+    "contact": {
+      "name": "Husni Mubarak",
+      "email": "husnimubarak859@gmail.com",
+      "url": "http://localhost:3000"
+    },
+    "license": {
+      "name": "APACHE 2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0"
+    }
+  },
+  "servers": [
+    {
+      "description": "localhost RESTful API Server",
+      "url": "http://localhost:3000",
+      "variables": {
+        "environment": {
+          "description": "Server Environment",
+          "default": "Fullstack"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/register": {
+      "post": {
+        "tags": ["Sign"],
+        "summary": "Registrasi pengguna baru",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "ID pengguna"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Alamat email pengguna"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "description": "Kata sandi pengguna"
+                  }
+                },
+                "required": ["id", "email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Registrasi berhasil"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": ["Sign"],
+        "summary": "Masuk ke akun pengguna",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Alamat email pengguna"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "description": "Kata sandi pengguna"
+                  }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login berhasil"
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Menampilkan daftar pengguna",
+        "parameters": [
+          {
+            "name": "access_token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil menampilkan daftar pengguna",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/sampleUser"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Users"],
+        "summary": "Menambahkan pengguna baru",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Alamat email pengguna"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "description": "Kata sandi pengguna"
+                  }
+                },
+                "required": ["name", "email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Pengguna berhasil ditambahkan"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Users"],
+        "summary": "Mengubah data pengguna",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Nama pengguna"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Alamat email pengguna"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "description": "Kata sandi pengguna"
+                  }
+                },
+                "required": ["name", "email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Data pengguna berhasil diubah"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Users"],
+        "summary": "Menghapus pengguna",
+        "responses": {
+          "200": {
+            "description": "Pengguna berhasil dihapus"
+          }
+        }
+      }
+    },
+    "/movies": {
+      "get": {
+        "tags": ["Movies"],
+        "summary": "Menampilkan daftar film",
+        "parameters": [
+          {
+            "name": "access_token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil menampilkan daftar film",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/sampleMovie"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Movies"],
+        "summary": "Menambahkan film baru",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "id",
+                    "description": "Id film"
+                  },
+                  "title": {
+                    "type": "string",
+                    "format": "title",
+                    "description": "Judul film"
+                  }
+                },
+                "required": ["id", "title"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Film berhasil ditambahkan"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Movies"],
+        "summary": "Mengubah data film",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "Id film"
+                  },
+                  "title": {
+                    "type": "string",
+                    "format": "title",
+                    "description": "Judul film"
+                  }
+                },
+                "required": ["id", "title"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Film berhasil diubah"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Movies"],
+        "summary": "Menghapus film",
+        "responses": {
+          "200": {
+            "description": "Film berhasil dihapus"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "sampleUser": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "email": {
+            "type": "string",
+            "example": "user@mail.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "SecretKey"
+          },
+          "role": {
+            "type": "string",
+            "example": "Student"
+          }
+        }
+      },
+      "sampleMovie": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "title": {
+            "type": "string",
+            "example": "Black Adam"
+          },
+          "genre": {
+            "type": "string",
+            "example": "Action"
+          },
+          "year": {
+            "type": "integer",
+            "example": 2023
+          }
+        }
+      }
+    }
+  }
+}
