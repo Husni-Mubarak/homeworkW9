@@ -1,7 +1,7 @@
 const pool = require("../db_server.js");
 const express = require("express");
 const usersRouter = express.Router();
-const {auhorization} = require('../middlewares/auth_user')
+const { authorization } = require("../middlewares/auth_user");
 
 // Endoint GET /users
 usersRouter.get("/users/:id", (req, res) => {
@@ -9,24 +9,28 @@ usersRouter.get("/users/:id", (req, res) => {
   const findQuery = `SELECT * FROM users WHERE id = $1`;
 
   pool.query(findQuery, [id], (err, response) => {
-    if (err) throw err;
+    if (err) next(err);
 
-    res.status(200).json(response.rows[0]);
+    if (response.rows.length === 0) {
+      next({ name: ":id users not found" });
+    } else {
+      res.status(200).json(response.rows[0]);
+    }
   });
 });
 
 // Endoint GET /users
 usersRouter.get("/users", (req, res) => {
-  const limit = req.query.limit || 10; 
-  const page = req.query.page || 1; 
-  const offset = (page - 1) * limit; 
+  const limit = req.query.limit || 10;
+  const page = req.query.page || 1;
+  const offset = (page - 1) * limit;
   const limitQuery = `SELECT COUNT(*) FROM users`;
 
   pool.query(limitQuery, (err, countResult) => {
     if (err) throw err;
 
     const totalUsers = countResult.rows[0].count;
-    const totalPages = Math.ceil(totalUsers / limit); 
+    const totalPages = Math.ceil(totalUsers / limit);
 
     pool.query(`SELECT * FROM users LIMIT ${limit} OFFSET ${offset}`, (err, dataResult) => {
       if (err) throw err;
@@ -43,25 +47,25 @@ usersRouter.get("/users", (req, res) => {
 
 // Endoint POST /users
 usersRouter.post("/users", function (req, res) {
-  const { id, title, genres, year } = req.body;
+  const { id, email, gender, password } = req.body;
   const insertQuery = `
       INSERT INTO users
-        ("id", "title", "genres", "year")
+        ("id", "email", "gender", "password")
       VALUES
         ($1, $2, $3, $4);
   `;
 
-  pool.query(insertQuery, [id, title, genres, year], (err, response) => {
+  pool.query(insertQuery, [id, email, gender, password], (err, response) => {
     if (err) throw err;
 
     res.status(201).json({
-      message: "Movie created successfully",
+      message: "User created successfully",
     });
   });
 });
 
 // Endoint PUT /users
-usersRouter.put("/users", (req, res) => {
+usersRouter.put("/users", authorization, (req, res) => {
   const alterQuery = `
       ALTER TABLE users
       ADD COLUMN is_admin
@@ -78,7 +82,7 @@ usersRouter.put("/users", (req, res) => {
 });
 
 // Endoint DELETE /users
-usersRouter.delete("/users/:id", (req, res) => {
+usersRouter.delete("/users/:id", authorization, (req, res) => {
   const { id } = req.params;
   const findQuery = `
       SELECT 

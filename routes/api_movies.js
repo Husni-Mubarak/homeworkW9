@@ -1,7 +1,7 @@
 const pool = require("../db_server.js");
 const express = require("express");
 const moviesRouter = express.Router();
-const { auhorization } = require("../middlewares/auth_user");
+const { authorization } = require("../middlewares/auth_user");
 
 // Endoint GET /movies
 moviesRouter.get("/movies/:id", (req, res, next) => {
@@ -12,7 +12,7 @@ moviesRouter.get("/movies/:id", (req, res, next) => {
     if (err) next(err);
 
     if (response.rows.length === 0) {
-      next({ name: ":id not found" });
+      next({ name: ":id movies not found" });
     } else {
       res.status(200).json(response.rows[0]);
     }
@@ -21,6 +21,7 @@ moviesRouter.get("/movies/:id", (req, res, next) => {
 
 // Endoint GET /movies
 moviesRouter.get("/movies", (req, res) => {
+  // console.log(req.loggedUser);
   const limit = req.query.limit || 10;
   const page = req.query.page || 1;
   const offset = (page - 1) * limit;
@@ -46,7 +47,7 @@ moviesRouter.get("/movies", (req, res) => {
 });
 
 // Endoint POST /movies
-moviesRouter.post("/movies", function (req, res) {
+moviesRouter.post("/movies", authorization, function (req, res) {
   const { title, genres, year } = req.body;
   const insertQuery = `
       INSERT INTO movies
@@ -66,7 +67,7 @@ moviesRouter.post("/movies", function (req, res) {
 });
 
 // Endoint PUT /movies
-moviesRouter.put("/movies/:id", (req, res) => {
+moviesRouter.put("/movies/:id", authorization, (req, res) => {
   const { id } = req.params;
   const { year } = req.body;
   const updateQuery = `
@@ -85,7 +86,7 @@ moviesRouter.put("/movies/:id", (req, res) => {
 });
 
 // Endoint DELETE /movies
-moviesRouter.delete("/movies/:id", (req, res) => {
+moviesRouter.delete("/movies/:id", authorization, (req, res) => {
   const { id } = req.params;
   const findQuery = `
       SELECT 
